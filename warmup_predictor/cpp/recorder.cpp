@@ -7,6 +7,7 @@
 #include <map>
 #include <Windows.h>
 #include <vector>
+#include "wtypes.h"
 
 using namespace std::chrono;
 using namespace std::this_thread;
@@ -34,7 +35,21 @@ vector<int> allowed_key_codes = {
     2,
 };
 map<int, bool> key_pressed_state;
-int record_time = 10;
+int record_time = 60;
+
+void GetDesktopResolution(int& horizontal, int& vertical)
+{
+   RECT desktop;
+   // Get a handle to the desktop window
+   const HWND hDesktop = GetDesktopWindow();
+   // Get the size of screen to the variable desktop
+   GetWindowRect(hDesktop, &desktop);
+   // The top left corner will have coordinates (0,0)
+   // and the bottom right corner will have coordinates
+   // (horizontal, vertical)
+   horizontal = desktop.right;
+   vertical = desktop.bottom;
+}
 
 void RecordMouseSpeed()
 {
@@ -54,7 +69,7 @@ void RecordMouseSpeed()
       previous_position = current_position;
     }
 
-    sleep_for(microseconds(50));
+    sleep_for(microseconds(500));
   }
 }
 
@@ -78,7 +93,7 @@ void RecordKeyPresses()
         key_pressed_state[key_code] = false;
       }
     }
-    sleep_for(microseconds(50));
+    sleep_for(microseconds(500));
   }
 }
 
@@ -86,16 +101,21 @@ int main()
 {
   bool mouse_key_start = false;
   bool mouse_move_start = false;
+  int horizontal = 0;
+  int vertical = 0;
+  GetDesktopResolution(horizontal, vertical);
+
   while (!mouse_key_start || !mouse_move_start || !recording)
   {
     POINT current_position;
     GetCursorPos(&current_position);
 
-    mouse_move_start = (current_position.x == 960 && current_position.y == 540)
+    mouse_move_start = (current_position.x < (horizontal/2)+2 && current_position.x > (horizontal/2)-2)
+    mouse_move_start = mouse_move_start && (current_position.y < (vertical/2)+2 && current_position.y > (vertical/2)-2)
     mouse_key_start = (GetAsyncKeyState(0x01) & 0x0001)
     recording = (mouse_key_start && mouse_move_start)
 
-    sleep_for(microseconds(50));
+    sleep_for(microseconds(500));
   }
   mouse_output_file.open("mouse_data.csv");
   mouse_output_file << "dx,dy,Time(ms)" << endl;
