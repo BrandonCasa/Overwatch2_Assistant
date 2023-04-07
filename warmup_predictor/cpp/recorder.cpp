@@ -91,28 +91,9 @@ int main()
     POINT current_position;
     GetCursorPos(&current_position);
 
-    if (current_position.x == 960 && current_position.y == 540)
-    {
-      mouse_move_start = true;
-    }
-    else
-    {
-      mouse_move_start = false;
-    }
-
-    if (GetAsyncKeyState(0x01) & 0x0001)
-    {
-      mouse_key_start = true;
-    }
-    else
-    {
-      mouse_key_start = false;
-    }
-
-    if (mouse_key_start && mouse_move_start)
-    {
-      recording = true;
-    }
+    mouse_move_start = (current_position.x == 960 && current_position.y == 540)
+    mouse_key_start = (GetAsyncKeyState(0x01) & 0x0001)
+    recording = (mouse_key_start && mouse_move_start)
 
     sleep_for(microseconds(50));
   }
