@@ -1,0 +1,13 @@
+KeyCode,Event,Time(ms)
+87,Press,1
+65,Press,1
+65,Release,1
+32,Press,1
+87,Release,250
+1,Press,250
+1,Release,250
+32,Release,328
+1,Press,468
+1,Release,468
+1,Press,639
+1,Release,639
